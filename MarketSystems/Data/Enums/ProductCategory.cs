@@ -3,9 +3,10 @@
 
 namespace MarketSystems.Data.Enums
 {
-    public enum Categories
+    // Enum for Product Categories
+    public enum ProductCategory
     {
-
+        Foods,
         Electronics,
         Clothing,
         Groceries,
@@ -13,6 +14,6 @@ namespace MarketSystems.Data.Enums
         BeautyAndPersonalCare,
         Books,
         Others
-
     }
 }
+

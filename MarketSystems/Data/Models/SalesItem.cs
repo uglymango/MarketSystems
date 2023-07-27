@@ -12,7 +12,7 @@ namespace MarketSystems.Data.Models
 
         private static int count = 0;
 
-        public SalesItem(int quantity, string saleproducts)
+        public SalesItem(int quantity, Product product, string saleproducts)
         {
             Quantity = quantity;
             SaleProducts = saleproducts;

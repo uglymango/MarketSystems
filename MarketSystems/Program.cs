@@ -1,40 +1,39 @@
-﻿namespace MarketSystems
+﻿using MarketManagement.HelpMenu;
+
+namespace MarketManagement
 {
-    public class Program
+    internal class Program
     {
-        public static void Main(string[] args)
+        static void Main(string[] args)
         {
-            Console.Clear();
-            
             int option;
 
             do
             {
-                Console.WriteLine("1. Operations on products");
-                Console.WriteLine("2. Operations on sales");
-                Console.WriteLine("0. Exit");
-                Console.WriteLine("------------------------");
-                Console.WriteLine("Please, select an option:");
-                Console.WriteLine("------------------------");
-
+                Console.WriteLine("1. Manage products");
+                Console.WriteLine("2. Manage sales");
+                Console.WriteLine("3. Exit.");
+                Console.WriteLine("----------------");
+                Console.WriteLine("Enter an option please:");
+                Console.WriteLine("----------------");
 
                 while (!int.TryParse(Console.ReadLine(), out option))
                 {
-                    Console.WriteLine("------------------------");
-                    Console.WriteLine("Please, enter a valid option:");
-                    Console.WriteLine("------------------------");
+                    Console.WriteLine("Invalid option!");
+                    Console.WriteLine("Enter an option please:");
+                    Console.WriteLine("----------------");
                 }
 
                 switch (option)
                 {
                     case 1:
-                        Submenu.StudentSubMenu();
+                        SubMenu.ManageProducts();
                         break;
                     case 2:
-                        Submenu.TeacherSubMenu();
+                        SubMenu.ManageSales();
                         break;
-                    case 0:
-                        Console.WriteLine("Bye");
+                    case 3:
+                        Console.WriteLine("Goodbye!");
                         break;
                     default:
                         Console.WriteLine("No such option!");
@@ -42,6 +41,8 @@
                 }
 
             } while (option != 0);
+
+
         }
     }
 }
