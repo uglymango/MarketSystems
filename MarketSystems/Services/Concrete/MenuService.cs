@@ -45,7 +45,7 @@ namespace MarketConsole.Services.Concrete
             }
         }
 
-        public static void AddNewProduct()
+        public static void AddProduct()
         {
             try
             {
@@ -55,13 +55,26 @@ namespace MarketConsole.Services.Concrete
                 Console.WriteLine("Please add price:");
                 decimal productPrice = decimal.Parse(Console.ReadLine());
 
-                Console.WriteLine("Please add category of product:");
-                ProductCategory productCategory = (ProductCategory)Enum.Parse(typeof(ProductCategory), Console.ReadLine(), true);
+                Console.WriteLine("Please select category of product:");
+                var categories = marketable.GetProductCategories();
+                for (int i = 0; i < categories.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {categories[i]}");
+                }
+
+                int categoryChoice = int.Parse(Console.ReadLine());
+                if (categoryChoice < 1 || categoryChoice > categories.Count)
+                {
+                    Console.WriteLine("Invalid category choice.");
+                    return;
+                }
+
+                ProductCategory productCategory = categories[categoryChoice - 1];
 
                 Console.WriteLine("Please add count of product:");
                 int productQuantity = int.Parse(Console.ReadLine());
 
-                var newID = marketable.AddProduct(productName, productPrice, productCategory, productQuantity);
+                var newID = marketable.AddProductWithCategory(productName, productPrice, productCategory.ToString(), productQuantity);
 
                 Console.WriteLine($"Product with ID {newID} was created!");
             }
@@ -71,30 +84,30 @@ namespace MarketConsole.Services.Concrete
             }
         }
 
+
         public static void UpdateProduct()
         {
             try
             {
-                Console.WriteLine("Please enter product ID for the product to be updated:");
-                int productID = int.Parse(Console.ReadLine());
+                Console.WriteLine("Enter the ID of the product you want to change:");
+                int numberID = int.Parse(Console.ReadLine());
 
-                var productToUpdate = marketable.FindProductById(productID);
-
-                Console.WriteLine("Please add new product name:");
+                Console.WriteLine("Enter the new name of the product:");
                 string productName = Console.ReadLine();
 
-                Console.WriteLine("Please add new price:");
+                Console.WriteLine("Enter the new price of the product:");
                 decimal productPrice = decimal.Parse(Console.ReadLine());
 
-                Console.WriteLine("Please add new category of product:");
+                Console.WriteLine("Enter the new category of the product:");
                 ProductCategory productCategory = (ProductCategory)Enum.Parse(typeof(ProductCategory), Console.ReadLine(), true);
 
-                Console.WriteLine("Please add new quantity of product:");
+                Console.WriteLine("Enter the new quantity of the product:");
                 int productQuantity = int.Parse(Console.ReadLine());
 
-                marketable.UpdateProduct(productID, productName, productPrice, productCategory, productQuantity);
+                marketable.UpdateProduct(numberID, productName, productPrice, productCategory, productQuantity);
 
-                Console.WriteLine($"Product with ID {productID} updated successfully!");
+                Console.WriteLine($"Product has been updated successfully!");
+
             }
             catch (Exception ex)
             {
@@ -234,12 +247,14 @@ namespace MarketConsole.Services.Concrete
                     return;
                 }
 
-                var table = new ConsoleTable("ID", "Amount", "Date");
+                var table = new ConsoleTable("ID", "Amount", "Quantity", "Date");
 
                 foreach (var sale in sales)
                 {
-                    table.AddRow(sale.Id, sale.Amount, sale.Date.ToString("dd/MM/yyyy"));
+                    var totalQuantity = sale.SaleItems.Sum(si => si.Quantity);
+                    table.AddRow(sale.Id, sale.Amount, totalQuantity, sale.Date.ToString("dd/MM/yyyy"));
                 }
+
                 table.Write();
             }
             catch (Exception ex)
@@ -248,34 +263,84 @@ namespace MarketConsole.Services.Concrete
             }
         }
 
-        public static void AddNewSales()
+        public static void AddNewSale()
         {
             try
             {
-                Console.WriteLine("Please add product ID for sales:");
-                int salesID = int.Parse(Console.ReadLine());
-
-                Console.WriteLine("Enter the counts:");
-                int counts = int.Parse(Console.ReadLine());
-
-                Console.WriteLine("Enter date (dd/MM/yyyy):");
+                Console.WriteLine("Please enter the date of the sale (MM/dd/yyyy):");
                 DateTime dateTime = DateTime.Parse(Console.ReadLine());
 
-                marketable.AddNewSale(salesID, counts, dateTime);
+                var products = marketable.GetProducts();
+                Console.WriteLine("Available Products:");
+                foreach (var product in products)
+                {
+                    Console.WriteLine($"ID: {product.Id}, Name: {product.Name}, Price: {product.Price}, Category: {product.Category}, Quantity: {product.Quantity}");
+                }
 
-                Console.WriteLine("Sale added successfully!");
-                Console.WriteLine("------------------------");
-            }
-            catch (FormatException)
-            {
-                Console.WriteLine("Invalid input format. Please enter valid data.");
+                var saleItems = new List<SaleItem>();
+
+                //The while loop allows us to add more than 1 product to the sale.
+                
+                while (true)
+                {
+                    Console.WriteLine("Enter the ID of the product to add to the sale (or enter 'done' to finish adding products):");
+                    string input = Console.ReadLine();
+
+                    if (input.ToLower() == "done")
+                        break;
+
+                    if (int.TryParse(input, out int productId))
+                    {
+                        var product = products.FirstOrDefault(p => p.Id == productId);
+                        if (product != null)
+                        {
+                            Console.WriteLine("Enter the quantity of the product:");
+                            int quantity = int.Parse(Console.ReadLine());
+
+                            if (quantity <= 0)
+                            {
+                                Console.WriteLine("Quantity must be greater than 0. Please try again.");
+                                continue;
+                            }
+
+                            if (quantity > product.Quantity)
+                            {
+                                Console.WriteLine("Quantity is more than the available stock. Please try again.");
+                                continue;
+                            }
+
+                            saleItems.Add(new SaleItem(product, quantity));
+                            product.Quantity -= quantity;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Product with ID {productId} not found. Please try again.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid input. Please enter a valid product ID or 'done' to finish adding products.");
+                    }
+                }
+
+                if (saleItems.Count == 0)
+                {
+                    Console.WriteLine("No products added to the sale. Sale creation cancelled.");
+                    return;
+                }
+
+                decimal totalPrice = saleItems.Sum(si => si.Product.Price * si.Quantity);
+                var newSale = new Sale(totalPrice, saleItems, dateTime);
+                marketable.GetSale().Add(newSale);
+
+                Console.WriteLine("Sale created successfully!");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Oops, an error occurred: {ex.Message}");
-                Console.WriteLine("------------------------");
             }
         }
+
         public static void RemoveProductFromSale()
         {
             try
@@ -343,18 +408,17 @@ namespace MarketConsole.Services.Concrete
         {
             try
             {
-                Console.WriteLine("Enter minDate for search (MM/dd/yyyy):");
+                Console.WriteLine("Enter minimum date for the search (dd/MM/yyyy):");
                 DateTime minDate = DateTime.Parse(Console.ReadLine());
 
-                Console.WriteLine("Enter maxDate for search (MM/dd/yyyy):");
+                Console.WriteLine("Enter maximum date for the search (dd/MM/yyyy):");
                 DateTime maxDate = DateTime.Parse(Console.ReadLine());
-
 
                 var foundSale = marketable.ShowSalesByDate(minDate, maxDate);
 
                 if (foundSale.Count == 0)
                 {
-                    Console.WriteLine("Not found!");
+                    Console.WriteLine("Could not find a sale!");
                 }
                 var table = new ConsoleTable("ID", "Price", "Date", "Category");
 
@@ -371,8 +435,7 @@ namespace MarketConsole.Services.Concrete
             }
             catch (Exception ex)
             {
-
-                Console.WriteLine($"Error! {ex.Message}");
+                Console.WriteLine($"Oops, an error occurred: {ex.Message}");
             }
         }
 
@@ -416,16 +479,14 @@ namespace MarketConsole.Services.Concrete
             }
         }
 
-
-
         public static void ShowSalesOnExactDate()
         {
             try
             {
-                Console.WriteLine("Enter the exact date to see sales on the given date (MM/dd/yyyy):");
+                Console.WriteLine("Enter the exact date to see sales on the given date (dd/MM/yyyy):");
                 DateTime dateTime = DateTime.Parse(Console.ReadLine());
 
-                var salesOnExactDate = marketable.ShowSalesOnExactDate(dateTime);
+                List<Sale> salesOnExactDate = marketable.ShowSalesOnExactDate(dateTime);
 
                 if (salesOnExactDate.Count == 0)
                 {
@@ -439,8 +500,7 @@ namespace MarketConsole.Services.Concrete
                 {
                     foreach (var item in sale.SaleItems)
                     {
-                        table.AddRow(sale.Id, sale.Amount, sale.Date, item.Product.Category);
-                        break;
+                        table.AddRow(sale.Id, sale.Amount, sale.Date.ToString("yyyy-MM-dd"), item.Product.Category);
                     }
                 }
 
@@ -452,18 +512,17 @@ namespace MarketConsole.Services.Concrete
             }
         }
 
-
         public static void ShowSalesByPriceRange()
         {
             try
             {
                 Console.WriteLine("Enter the minimum price for the sale:");
-                decimal minPrice = decimal.Parse(Console.ReadLine());
+                decimal minAmount = decimal.Parse(Console.ReadLine());
 
                 Console.WriteLine("Enter the maximum price for the sale:");
-                decimal maxPrice = decimal.Parse(Console.ReadLine());
+                decimal maxAmount = decimal.Parse(Console.ReadLine());
 
-                var salePriceRange = marketable.ShowSaleByPriceRange(minPrice, maxPrice);
+                var salePriceRange = marketable.ShowSalesByPriceRange(minAmount, maxAmount);
                 if (salePriceRange.Count == 0)
                 {
                     Console.WriteLine("No sales found within the price range!");
@@ -487,7 +546,6 @@ namespace MarketConsole.Services.Concrete
                 Console.WriteLine($"Oops, an error occurred: {ex.Message}");
             }
         }
-
 
         public static void ShowSalesByID()
         {
