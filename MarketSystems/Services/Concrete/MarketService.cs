@@ -129,9 +129,10 @@ namespace MarketConsole.Services.Concrete
         }
 
         public List<ProductCategory> GetProductCategories()
-{
-    return Enum.GetValues(typeof(ProductCategory)).Cast<ProductCategory>().ToList();
-}
+        {
+            return Enum.GetValues(typeof(ProductCategory)).Cast<ProductCategory>().ToList();
+        }
+
 
         public int AddProductWithCategory(string name, decimal price, string category, int quantity)
         {
@@ -201,10 +202,14 @@ namespace MarketConsole.Services.Concrete
         public List<Product> ShowCategoryByProduct(ProductCategory category)
         {
             if (category == null)
-                throw new ArgumentNullException("Category cannot be null!");
+            {
+                
+                return products.ToList();
+            }
 
             return products.Where(x => x.Category == category).ToList();
         }
+
 
         public List<Product> FindProductByName(string name)
         {

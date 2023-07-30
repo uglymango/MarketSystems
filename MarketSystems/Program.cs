@@ -6,6 +6,8 @@ namespace MarketManagement
     {
         static void Main(string[] args)
         {
+           //Here we create the main menu which gives us 3 options
+            
             int option;
 
             do
@@ -40,6 +42,7 @@ namespace MarketManagement
                         break;
                 }
 
+                //The loop here stops if option is 0 (which is exit) and program ends
             } while (option != 0);
 
 

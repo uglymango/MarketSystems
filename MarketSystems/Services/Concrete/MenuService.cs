@@ -449,10 +449,12 @@ namespace MarketConsole.Services.Concrete
                 Console.WriteLine("Enter the sale ID to return the purchase:");
                 int saleId = int.Parse(Console.ReadLine());
 
+                //Here we find the sale with the id we entered
                 var sale = sales.FirstOrDefault(s => s.Id == saleId);
 
                 if (sale != null)
                 {
+                   //Here we check if the sale contains saleitems
                     if (sale.SaleItems != null)
                     {
                         foreach (var saleItem in sale.SaleItems)
@@ -486,6 +488,8 @@ namespace MarketConsole.Services.Concrete
                 Console.WriteLine("Enter the exact date to see sales on the given date (dd/MM/yyyy):");
                 DateTime dateTime = DateTime.Parse(Console.ReadLine());
 
+               
+                //We get the list of all sales which took place in the date we entred
                 List<Sale> salesOnExactDate = marketable.ShowSalesOnExactDate(dateTime);
 
                 if (salesOnExactDate.Count == 0)

@@ -44,7 +44,7 @@ namespace MarketManagement.HelpMenu
                         MenuService.ShowProducts();
                         break;
                     case 2:
-                        MenuService.AddNewProduct();
+                        MenuService.AddProduct();
                         break;
                     case 3:
                         MenuService.UpdateProduct();
@@ -108,7 +108,7 @@ namespace MarketManagement.HelpMenu
                         MenuService.ShowSales();
                         break;
                     case 2:
-                        MenuService.AddNewSales();
+                        MenuService.AddNewSale();
                         break;
                     case 3:
                         MenuService.RemoveProductFromSale();
