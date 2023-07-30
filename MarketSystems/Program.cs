@@ -12,7 +12,7 @@ namespace MarketManagement
             {
                 Console.WriteLine("1. Manage products");
                 Console.WriteLine("2. Manage sales");
-                Console.WriteLine("3. Exit.");
+                Console.WriteLine("0. Exit.");
                 Console.WriteLine("----------------");
                 Console.WriteLine("Enter an option please:");
                 Console.WriteLine("----------------");
@@ -32,7 +32,7 @@ namespace MarketManagement
                     case 2:
                         SubMenu.ManageSales();
                         break;
-                    case 3:
+                    case 0:
                         Console.WriteLine("Goodbye!");
                         break;
                     default:
