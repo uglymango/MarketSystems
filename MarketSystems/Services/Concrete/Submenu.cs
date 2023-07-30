@@ -1,4 +1,6 @@
-﻿using MarketSystems.Data.Models;
+﻿using MarketConsole.Data.Models;
+using MarketConsole.Services.Concrete;
+using MarketConsole.Services.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +13,11 @@ namespace MarketManagement.HelpMenu
     {
         public static void ManageProducts()
         {
-            ManageProducts manageProducts = new ManageProducts();
-
-            Console.Clear();
             int option;
 
             do
             {
+
                 Console.WriteLine("1. Show products.");
                 Console.WriteLine("2. Add new product.");
                 Console.WriteLine("3. Update product.");
@@ -25,7 +25,7 @@ namespace MarketManagement.HelpMenu
                 Console.WriteLine("5. Show category by product.");
                 Console.WriteLine("6. Show product by price range.");
                 Console.WriteLine("7. Find product by name.");
-                Console.WriteLine("0. Back to the main menu.");
+                Console.WriteLine("0. Back to main menu.");
                 Console.WriteLine("------------------------");
                 Console.WriteLine("Please, enter a valid option:");
                 Console.WriteLine("------------------------");
@@ -37,31 +37,32 @@ namespace MarketManagement.HelpMenu
                     Console.WriteLine("------------------------");
                 }
 
+
                 switch (option)
                 {
                     case 1:
-                        manageProducts.ShowProducts(); 
+                        MenuService.ShowProducts();
                         break;
                     case 2:
-                        manageProducts.AddNewProduct();
+                        MenuService.AddNewProduct();
                         break;
                     case 3:
-                        manageProducts.UpdateProduct();
+                        MenuService.UpdateProduct();
                         break;
                     case 4:
-                        manageProducts.RemoveProduct();
+                        MenuService.RemoveProduct();
                         break;
                     case 5:
-                        manageProducts.ShowCategoryByProduct();
+                        MenuService.ShowCategoryByProduct();
                         break;
                     case 6:
-                        manageProducts.ShowProductByPriceRange();
+                        MenuService.ShowProductByPriceRange();
                         break;
                     case 7:
-                        manageProducts.FindProductByName();
+                        MenuService.FindProductByName();
                         break;
                     case 0:
-                        Console.WriteLine("Going back to the main menu.");
+                        Console.WriteLine("Bye");
                         break;
                     default:
                         Console.WriteLine("No such option!");
@@ -69,28 +70,26 @@ namespace MarketManagement.HelpMenu
                 }
 
             } while (option != 0);
-        }
 
-        private static object GetManageProducts()
-        {
-            return ManageProducts;
         }
 
         public static void ManageSales()
         {
+
             int option;
 
             do
             {
+
                 Console.WriteLine("1. Show sales.");
-                Console.WriteLine("2. Return purchase.");
-                Console.WriteLine("3. Remove sales.");
-                Console.WriteLine("4. Add new sales.");
+                Console.WriteLine("2. Add new sales.");
+                Console.WriteLine("3. Remove product from sale.");
+                Console.WriteLine("4. Return purchase.");
                 Console.WriteLine("5. Show sales by date.");
                 Console.WriteLine("6. Show sales by amount range.");
-                Console.WriteLine("7. Search by sale date.");
+                Console.WriteLine("7. Showing sales on a given date.");
                 Console.WriteLine("8. Show sales by ID.");
-                Console.WriteLine("0. Back to the main menu.");
+                Console.WriteLine("0. Back to main menu.");
                 Console.WriteLine("------------------------");
                 Console.WriteLine("Please, enter a valid option:");
                 Console.WriteLine("------------------------");
@@ -102,48 +101,45 @@ namespace MarketManagement.HelpMenu
                     Console.WriteLine("------------------------");
                 }
 
+
                 switch (option)
                 {
                     case 1:
-                        ShowSales(); 
+                        MenuService.ShowSales();
                         break;
                     case 2:
-                        ReturnPurchase(); 
+                        MenuService.AddNewSales();
                         break;
                     case 3:
-                        RemoveSales(); 
+                        MenuService.RemoveProductFromSale();
                         break;
                     case 4:
-                        AddNewSales(); 
+                       MenuService.ReturnPurchase();
                         break;
                     case 5:
-                        ShowSalesByDate(); 
+                        MenuService.ShowSalesByDate();
                         break;
                     case 6:
-                        ShowSalesByAmountRange(); 
+                        MenuService.ShowSalesByPriceRange();
                         break;
                     case 7:
-                        SearchBySaleDate(); 
+                        MenuService.ShowSalesOnExactDate();
                         break;
                     case 8:
-                        ShowSalesById(); 
+                        MenuService.ShowSalesByID();
                         break;
                     case 0:
-                        Console.WriteLine("Going back to the main menu.");
+                        Console.WriteLine("Bye!");
                         break;
                     default:
                         Console.WriteLine("No such option!");
                         break;
                 }
-            } while (option != 0);
+
+
+            } 
+            while (option != 0);
         }
-        private static void ShowSales() { }
-        private static void ReturnPurchase() { }
-        private static void RemoveSales() { }
-        private static void AddNewSales() { }
-        private static void ShowSalesByDate() { }
-        private static void ShowSalesByAmountRange() { }
-        private static void SearchBySaleDate() { }
-        private static void ShowSalesById() { }
+
     }
 }
