@@ -13,6 +13,8 @@ namespace MarketManagement.HelpMenu
     {
         public static void ManageProducts()
         {
+           //We create submenu for  products in here
+            
             int option;
 
             do
@@ -76,6 +78,8 @@ namespace MarketManagement.HelpMenu
         public static void ManageSales()
         {
 
+            //And submenu for sales here 
+            
             int option;
 
             do
@@ -138,6 +142,7 @@ namespace MarketManagement.HelpMenu
 
 
             } 
+            //Like products menu option 0 also helps to go back to main menu here
             while (option != 0);
         }
 

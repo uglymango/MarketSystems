@@ -40,6 +40,7 @@ namespace MarketConsole.Services.Concrete
                 Console.WriteLine("Enter the sale ID to remove the product:");
                 int saleId = int.Parse(Console.ReadLine());
 
+               //Here we use linq's find method to find the product
                 var sale = sales.Find(s => s.Id == saleId);
 
                 if (sale != null)
@@ -93,6 +94,7 @@ namespace MarketConsole.Services.Concrete
                 }
                 else
                 {
+                    //Here this returns sale not found if id is invaild
                     Console.WriteLine("Sale not found with the specified ID.");
                     Console.WriteLine("------------------------");
                 }
@@ -109,6 +111,7 @@ namespace MarketConsole.Services.Concrete
             if (minDate > maxDate)
                 throw new ArgumentException("Minimum date cannot be greater than Maximum date!");
 
+            //We find all sales within the date range we have entered before
             List<Sale> foundSales = sales.FindAll(sale => sale.Date >= minDate && sale.Date <= maxDate);
 
             return foundSales;
@@ -123,37 +126,44 @@ namespace MarketConsole.Services.Concrete
 
         public List<Sale> ShowSalesByPriceRange(decimal minAmount, decimal maxAmount)
         {
+            //We find all sales within the price range we have entered before
             List<Sale> foundSales = sales.FindAll(sale => sale.Amount >= minAmount && sale.Amount <= maxAmount);
 
             return foundSales;
         }
 
+        //Added this method so we could get a list of categories when we wanna add a product
         public List<ProductCategory> GetProductCategories()
         {
             return Enum.GetValues(typeof(ProductCategory)).Cast<ProductCategory>().ToList();
         }
 
-
+        //The method here is called so because it lets us add a new product to the market with the specific details including category
         public int AddProductWithCategory(string name, decimal price, string category, int quantity)
         {
+           
+            //We use TryParse here to convert string into enum
             if (!Enum.TryParse<ProductCategory>(category, true, out var productCategory))
             {
                 Console.WriteLine("Invalid product category.");
                 return -1;
             }
 
+            //Here we check if the entered name is null or not 
             if (string.IsNullOrWhiteSpace(name))
             {
                 Console.WriteLine("Product name cannot be null or whitespace!");
                 return -1;
             }
 
-            if (price < 0)
+           //And here we check if the price equals to 0 or its less than 0
+            if (price <= 0)
             {
                 Console.WriteLine("Price cannot be negative!");
                 return -1;
             }
 
+            //Here we don't check if quantity is 0 cuz we might have ran out of stock but we still have the product
             if (quantity < 0)
             {
                 Console.WriteLine("Product count cannot be less than 0.");
@@ -168,18 +178,20 @@ namespace MarketConsole.Services.Concrete
 
         public void DeleteProduct(int ID)
         {
+            //Here wr check if the id is less than 0 or not
             if (ID < 0)
-                throw new ArgumentOutOfRangeException("ID can't be negative!");
+                throw new ArgumentOutOfRangeException("Product ID cannot be negative!");
 
             var existingProduct = products.FirstOrDefault(p => p.Id == ID);
             if (existingProduct == null)
-                throw new ArgumentNullException("Product not found!");
+                throw new ArgumentNullException("Could not find the product!");
 
             products = products.Where(p => p.Id != ID).ToList();
         }
 
         public void UpdateProduct(int ID, string name, decimal price, ProductCategory category, int quantity)
         {
+            //Check if any of the entered parameters (name/price/quantity) is null
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException("Name cannot be null!");
 
@@ -191,7 +203,7 @@ namespace MarketConsole.Services.Concrete
 
             var existingProduct = products.FirstOrDefault(p => p.Id == ID);
             if (existingProduct == null)
-                throw new Exception("Product not found!");
+                throw new Exception("Could not find the product!");
 
             existingProduct.Name = name;
             existingProduct.Price = price;
@@ -201,12 +213,14 @@ namespace MarketConsole.Services.Concrete
 
         public List<Product> ShowCategoryByProduct(ProductCategory category)
         {
+            
+            //Here we check if the category is null (even if we don't need cuz i started count from 1)
             if (category == null)
             {
                 
                 return products.ToList();
             }
-
+            //And it filters and returns us the products in the category we asked for
             return products.Where(x => x.Category == category).ToList();
         }
 
@@ -215,15 +229,18 @@ namespace MarketConsole.Services.Concrete
         {
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentNullException("Name cannot be empty!");
-
+          
+            //Here it filters all products and returns filtered ones which include the name we input
             return products.Where(x => x.Name == name).ToList();
         }
 
         public List<Product> ShowProductByPriceRange(decimal minPrice, decimal maxPrice)
         {
+            //We check if minimum price is less than 0 or not
             if (minPrice < 0)
                 throw new Exception("Minimum price cannot be less than 0");
 
+            //And here we cjeck if minimum price is more than maximum price
             if (minPrice > maxPrice)
                 throw new Exception("Minimum price cannot be more than maximum price!");
 
